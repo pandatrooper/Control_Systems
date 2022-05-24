@@ -10,6 +10,14 @@ class Modbus(Packet):
                     ShortField("Reference Number", int('0001', 16)),
                     ShortField("Data", int('ff00', 16))                  
                     ]
+                    
+class Modbus0(Packet):
+    name = "Modbus"
+    fields_desc = [ XByteField("Function Code", int('05', 16)),
+                    ShortField("Reference Number", int('0001', 16)),
+                    ShortField("Data", int('0000', 16))                  
+                    ]
+
 
 class ModbusTCP(Packet):
     name = "Modbus/TCP"
@@ -46,8 +54,10 @@ while True:
     try:
         # Encapsulate modbus inside the raw data, then send and receive
         # Anything can be done with response
-       ss.sr1(Raw(ModbusTCP()/Modbus()))
-       time.sleep(1)
+       ss.sr1(Raw(ModbusTCP()/Modbus()), timeout=1)
+       time.sleep(0.15)
+       ss.sr1(Raw(ModbusTCP()/Modbus0()), timeout=1)
+       time.sleep(0.15)
     except KeyboardInterrupt:
        break
 
